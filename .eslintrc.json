@@ -1,0 +1,7 @@
+{
+    "extends": ["react-app", "prettier", "next/core-web-vitals"],
+    "plugins": ["prettier"],
+    "rules": {
+        "prettier/prettier": ["error", "prettierOptions"]
+    }
+}

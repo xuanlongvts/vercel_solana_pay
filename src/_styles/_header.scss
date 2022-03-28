@@ -1,0 +1,61 @@
+header {
+    height: 57px;
+    padding: 5px 15px;
+    position: relative;
+    // box-shadow: 0 0 2px #000;
+
+    // &.noBack {
+    //     justify-content: center;
+    // }
+
+    .back {
+        width: 110px;
+        height: 50px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+        position: absolute;
+        left: 10px;
+    }
+
+    .wallet-adapter-dropdown,
+    .wallet-adapter-button {
+        height: 40px;
+        padding: 0 10px;
+        position: absolute;
+        right: 10px;
+    }
+
+    .wallet-adapter-dropdown {
+        right: 0;
+        width: 50px;
+    }
+}
+
+.logo {
+    display: flex;
+    width: 110px;
+    height: 45px;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+
+    // span {
+    //     &.txt {
+    //         display: inline-block;
+    //         background-color: #000;
+    //         width: 70px;
+    //         height: 45px;
+    //         border-radius: 50%;
+    //         text-align: center;
+    //         line-height: 42px;
+    //         color: white;
+    //         font-weight: 700;
+    //         font-size: 18px;
+    //     }
+    // }
+}
