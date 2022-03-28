@@ -110,6 +110,8 @@ const App = (props: T_APP) => {
 
                             <main>
                                 <Component {...pageProps} />
+
+                                <footer>&copy; xuanlongvts</footer>
                             </main>
                             <LoadingApp />
                         </ThemeProvider>

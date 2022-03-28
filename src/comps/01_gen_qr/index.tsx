@@ -62,6 +62,10 @@ const GenerateQr = () => {
                     <label>Recipient pubkey: </label>
                     <code>{WalletRecipient}</code>
                 </p>
+                <p>
+                    <label>Environment: </label>
+                    <strong>Dev net on Solana</strong>
+                </p>
 
                 <TextField
                     required
