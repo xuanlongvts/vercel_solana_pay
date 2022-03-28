@@ -86,6 +86,7 @@ const useBoxProgress = makeStyles({
         display: 'flex',
         justifyContent: 'center',
         marginTop: 30,
+        marginBottom: 50,
     },
 });
 

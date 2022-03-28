@@ -21,20 +21,25 @@ import { ENUM_FIELDS } from '_validate';
 import QRCode from './qr_code';
 import Progress from './progress';
 
-const referencePubkey = Keypair.generate().publicKey; // Important for reference receiver transaction confirmed
+// const referencePubkey = new Keypair().publicKey; // Important for reference receiver transaction confirmed
+// console.log('ref key', referencePubkey.toBase58());
 
 const Pending = () => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const router = useRouter();
 
+    const reRefreshKey = Keypair.generate().publicKey;
+
     const [signature, setSignature] = useState<TransactionSignature>();
     const [status, setStatus] = useState<PaymentStatus>(PaymentStatus.Pending);
-    const [reference, setReference] = useState<PublicKey>(referencePubkey);
+    const [reference, setReference] = useState<PublicKey>(reRefreshKey);
     const [confirmations, setConfirmations] = useState<Confirmations>(0);
     const [qrCodeValid, setQrCodeValid] = useState<boolean>(false);
 
     const progress = useMemo(() => confirmations / requiredConfirmations, [confirmations]);
+
+    console.log('reference: ---> ', reference.toBase58());
 
     // F5 Browswer
     useEffect(() => {
@@ -101,7 +106,7 @@ const Pending = () => {
         const interval = setInterval(async () => {
             let signature: ConfirmedSignatureInfo;
             try {
-                signature = await findTransactionSignature(connection, referencePubkey, undefined, 'confirmed');
+                signature = await findTransactionSignature(connection, reference, undefined, 'confirmed');
 
                 console.log('signature: ---> ', signature);
 
@@ -220,7 +225,7 @@ const Pending = () => {
             <Header />
             <section>
                 {status === PaymentStatus.Pending && qrCodeValid ? (
-                    <QRCode refPubkey={referencePubkey} />
+                    <QRCode refPubkey={reference} />
                 ) : (
                     <Progress status={status} progress={progress} />
                 )}
