@@ -6,6 +6,7 @@ export enum ENUM_FIELDS {
     message = 'message',
     memo = 'memo',
     reference = 'reference',
+    unitPay = 'unitPay',
 }
 
 export interface T_HOOKS_FOMR_GENE_QR_CODE {
@@ -26,12 +27,16 @@ export const labelField = Yup.string()
 
 const AMOUNT_FILED = {
     min: 0.0005,
-    max: 1000000, // 1_000_000
+    max: 1_000_000,
 };
-export const amountFiled = Yup.number()
-    .min(AMOUNT_FILED.min, `Amount min is ${AMOUNT_FILED.min} SOL`)
-    .max(AMOUNT_FILED.max, `Amount max is ${AMOUNT_FILED.max} SOLs`)
-    .required('Amount required');
+export const amountFiled = (unit: number) => {
+    const lblUnit = unit === 1 ? 'SOL' : 'USDC';
+
+    return Yup.number()
+        .min(AMOUNT_FILED.min, `Amount min is ${AMOUNT_FILED.min} ${lblUnit}`)
+        .max(AMOUNT_FILED.max, `Amount max is ${AMOUNT_FILED.max} ${lblUnit}`)
+        .required('Amount required');
+};
 
 const MESSAGE_FILED = {
     min: 3,
@@ -57,17 +62,18 @@ export const memoField = Yup.string()
         then: rule => rule.min(MEMO_FILED.min).max(MEMO_FILED.max),
     });
 
-const FundAccSchema = Yup.object().shape(
-    {
-        [ENUM_FIELDS.label]: labelField,
-        [ENUM_FIELDS.amount]: amountFiled,
-        [ENUM_FIELDS.message]: messageField,
-        [ENUM_FIELDS.memo]: memoField,
-    },
-    [
-        [ENUM_FIELDS.message, ENUM_FIELDS.message],
-        [ENUM_FIELDS.memo, ENUM_FIELDS.memo],
-    ],
-);
+const FundAccSchema = (unit: number) =>
+    Yup.object().shape(
+        {
+            [ENUM_FIELDS.label]: labelField,
+            [ENUM_FIELDS.amount]: amountFiled(unit),
+            [ENUM_FIELDS.message]: messageField,
+            [ENUM_FIELDS.memo]: memoField,
+        },
+        [
+            [ENUM_FIELDS.message, ENUM_FIELDS.message],
+            [ENUM_FIELDS.memo, ENUM_FIELDS.memo],
+        ],
+    );
 
 export default FundAccSchema;

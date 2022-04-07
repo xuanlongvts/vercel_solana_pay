@@ -1,8 +1,12 @@
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
+import clsx from 'clsx';
 
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import InputAdornment from '@mui/material/InputAdornment';
 
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -17,14 +21,22 @@ const GenerateQr = () => {
     const dispatch = useDispatch();
     const router = useRouter();
 
+    const [unitPay, setUnitPay] = useState<number>(1);
+
+    const handleUnitPay = (unit: number) => {
+        unitPay !== unit && setUnitPay(unit);
+        unitPay !== unit && resetField(ENUM_FIELDS.amount);
+    };
+
     const {
         register,
         handleSubmit,
         watch,
+        resetField,
         formState: { errors },
     } = useForm<T_HOOKS_FOMR_GENE_QR_CODE>({
         mode: 'onBlur',
-        resolver: yupResolver(FundAccSchema),
+        resolver: yupResolver(FundAccSchema(unitPay)),
     });
 
     const onSubmitForm = (data: T_HOOKS_FOMR_GENE_QR_CODE) => {
@@ -32,17 +44,12 @@ const GenerateQr = () => {
 
         LocalStorageServices.setItemJson(ENUM_FIELDS.label, data[ENUM_FIELDS.label]);
         LocalStorageServices.setItemJson(ENUM_FIELDS.amount, data[ENUM_FIELDS.amount]);
+        LocalStorageServices.setItemJson(ENUM_FIELDS.unitPay, unitPay);
 
         data[ENUM_FIELDS.message] && LocalStorageServices.setItemJson(ENUM_FIELDS.message, data[ENUM_FIELDS.message]);
         data[ENUM_FIELDS.memo] && LocalStorageServices.setItemJson(ENUM_FIELDS.memo, data[ENUM_FIELDS.memo]);
 
         // http://localhost:1234?recipient=8vnGQag2cPzm71URQRegJ6eKbnrPvtJ8W7Vq9BYYSGrT&label=Long+Le+pay&amount=1&message=Thanks%20for%20all%20the%20fish&memo=OrderId1234
-
-        // const url = `?recipient=${WalletRecipient}&label=${data[ENUM_FIELDS.label]}&amount=${data[ENUM_FIELDS.amount]}&message=${
-        //     data[ENUM_FIELDS.message]
-        // }&memo=${data[ENUM_FIELDS.memo]}`;
-
-        // router.push(`/02-pending${url}`);
 
         router.push('/02-pending');
     };
@@ -85,10 +92,32 @@ const GenerateQr = () => {
                     fullWidth
                     variant="outlined"
                     id={ENUM_FIELDS.amount}
-                    label="Amount SOL"
+                    label={`Amount ${unitPay === 1 ? 'SOL' : 'USDC'}`}
                     placeholder="1"
                     type="text"
                     margin="normal"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end" className={clsx('sol-usdc', unitPay === 1 ? 'sol' : 'usdc')}>
+                                <Image
+                                    src="/imgs/sol.svg"
+                                    alt="Solana"
+                                    width={32}
+                                    height={32}
+                                    onClick={() => handleUnitPay(1)}
+                                    className="img_sol"
+                                />
+                                <Image
+                                    src="/imgs/usdc.svg"
+                                    alt="USDC"
+                                    width={32}
+                                    height={32}
+                                    onClick={() => handleUnitPay(2)}
+                                    className="img_usdc"
+                                />
+                            </InputAdornment>
+                        ),
+                    }}
                     {...register(ENUM_FIELDS.amount)}
                     error={!!errors[ENUM_FIELDS.amount]}
                     helperText={errors[ENUM_FIELDS.amount]?.message}

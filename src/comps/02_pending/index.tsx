@@ -21,15 +21,12 @@ import { ENUM_FIELDS } from '_validate';
 import QRCode from './qr_code';
 import Progress from './progress';
 
-// const referencePubkey = new Keypair().publicKey; // Important for reference receiver transaction confirmed
-// console.log('ref key', referencePubkey.toBase58());
-
 const Pending = () => {
     const { connection } = useConnection();
     const { publicKey, sendTransaction } = useWallet();
     const router = useRouter();
 
-    const reRefreshKey = Keypair.generate().publicKey;
+    const reRefreshKey = Keypair.generate().publicKey; // Important for reference receiver transaction confirmed
 
     const [signature, setSignature] = useState<TransactionSignature>();
     const [status, setStatus] = useState<PaymentStatus>(PaymentStatus.Pending);
@@ -39,7 +36,7 @@ const Pending = () => {
 
     const progress = useMemo(() => confirmations / requiredConfirmations, [confirmations]);
 
-    console.log('reference: ---> ', reference.toBase58());
+    // console.log('reference: ---> ', reference.toBase58());
 
     // F5 Browswer
     useEffect(() => {
@@ -68,7 +65,7 @@ const Pending = () => {
                     const getLabel = encodeURI(LocalStorageServices.getItemJson(ENUM_FIELDS.label));
                     const getMemo = encodeURI(LocalStorageServices.getItemJson(ENUM_FIELDS.memo));
 
-                    if (!getAmount || !getAmount) {
+                    if (!getAmount || !getLabel) {
                         router.push('/');
                     }
 
@@ -115,7 +112,13 @@ const Pending = () => {
                     setSignature(signature.signature);
                     setStatus(PaymentStatus.Confirmed);
 
-                    LocalStorageServices.removeManyItems([ENUM_FIELDS.amount, ENUM_FIELDS.label, ENUM_FIELDS.message, ENUM_FIELDS.memo]);
+                    LocalStorageServices.removeManyItems([
+                        ENUM_FIELDS.amount,
+                        ENUM_FIELDS.label,
+                        ENUM_FIELDS.message,
+                        ENUM_FIELDS.memo,
+                        ENUM_FIELDS.unitPay,
+                    ]);
                 }
             } catch (err: any) {
                 // If the RPC node doesn't have the transaction signature yet, try again
@@ -205,8 +208,8 @@ const Pending = () => {
                             ENUM_FIELDS.label,
                             ENUM_FIELDS.message,
                             ENUM_FIELDS.memo,
+                            ENUM_FIELDS.unitPay,
                         ]);
-                        // router.push('/03-confirm');
                     }
                 }
             } catch (err: any) {

@@ -16,3 +16,32 @@
         font-size: 30px;
     }
 }
+
+.sol-usdc {
+    > span {
+        cursor: pointer;
+        &:last-child {
+            margin-left: 10px !important;
+        }
+    }
+
+    &.sol {
+        .img_usdc {
+            opacity: 0.2;
+
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+
+    &.usdc {
+        .img_sol {
+            opacity: 0.2;
+
+            &:hover {
+                opacity: 0.7;
+            }
+        }
+    }
+}
